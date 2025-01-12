@@ -1,0 +1,43 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# PyQt5 UI files
+# *.ui
+
+# Virtual environment directories
+venv/
+env/
+*.egg-info/
+
+# Distribution / packaging
+build/
+dist/
+*.egg
+*.tgz
+*.zip
+
+# pyinstaller
+*.spec
+
+# VS Code settings (if using VS Code)
+.vscode/
+
+# Pycharm project files (if using PyCharm)
+.idea/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Log files
+*.log
+
+# SQLite database file
+*.sqlite3
+
+# Pytest cache directory
+.pytest_cache/
+
+# Other system files
+.DS_Store
+Thumbs.db
