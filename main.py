@@ -39,10 +39,6 @@ class Ui_MainWindow(object):
         self.comboBox_selectMotor.addItem(icon, "")
         self.comboBox_selectMotor.addItem(icon, "")
         self.comboBox_selectMotor.addItem(icon, "")
-        self.comboBox_selectMotor.addItem(icon, "")
-        self.comboBox_selectMotor.addItem(icon, "")
-        self.comboBox_selectMotor.addItem(icon, "")
-        self.comboBox_selectMotor.addItem(icon, "")
         self.horizontalLayout.addWidget(self.comboBox_selectMotor)
         spacerItem = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
@@ -65,14 +61,9 @@ class Ui_MainWindow(object):
         self.doubleSpinBox_2.setFont(font)
         self.doubleSpinBox_2.setObjectName("doubleSpinBox_2")
         self.horizontalLayout.addWidget(self.doubleSpinBox_2)
-        self.doubleSpinBox_3 = QtWidgets.QDoubleSpinBox(self.horizontalLayoutWidget)
-        font = QtGui.QFont()
-        font.setPointSize(11)
-        self.doubleSpinBox_3.setFont(font)
-        self.doubleSpinBox_3.setObjectName("doubleSpinBox_3")
-        self.horizontalLayout.addWidget(self.doubleSpinBox_3)
         spacerItem1 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
+
         self.btn_send = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         font = QtGui.QFont()
         font.setPointSize(11)
@@ -82,6 +73,8 @@ class Ui_MainWindow(object):
         self.btn_send.setIcon(icon1)
         self.btn_send.setObjectName("btn_send")
         self.horizontalLayout.addWidget(self.btn_send)
+        self.btn_send.clicked.connect(self.btn_send_motor)
+
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_2.setGeometry(QtCore.QRect(40, 140, 411, 91))
         font = QtGui.QFont()
@@ -203,14 +196,43 @@ class Ui_MainWindow(object):
         else:
             self.textBrowser.clear()
             self.textBrowser.append("<span style='color:red;'>Записи очищены</span>")
+
+    def btn_send_motor(self):
+        if hasattr(self, 'serial_port') and self.serial_port and self.serial_port.is_open:
+            motor = self.comboBox_selectMotor.currentText().split(" ")[1]
             
+            isInverse = "8" if self.checkBox.isChecked() else "0"
+            
+            hex_degree = str(hex(int(float(self.doubleSpinBox.text().replace(',', '')))))
+            if len(hex_degree)==6:
+                degree1=hex_degree[2:4]
+                degree2=hex_degree[4:6]
+            else:
+                degree1="0"+hex_degree[2]
+                degree2=hex_degree[3:5]                
+
+            hex_speed = str(hex(int(float(self.doubleSpinBox_2.text().replace(',','')))))
+            if len(hex_speed)==6:    
+                speed1 = hex_speed[2:4]
+                speed2 = hex_speed[4:6]
+            else:
+                speed1 = "0"+hex_speed[2]
+                speed2 = hex_speed[3:5]
+            message = "11 " + isInverse + motor + " " + degree1+ " " + degree2 + " " + speed1 + " " + speed2
+            hex_message = bytes.fromhex(message.replace(" ", ""))
+            self.serial_port.write(hex_message)
+            self.textBrowser.append(message)
+
+        else:
+            self.textBrowser.append("<span style='color:red;'>Ошибка: последовательный порт не открыт.</span>")    
     def btn_send_clicked(self):
         if hasattr(self,'serial_port') and self.serial_port and self.serial_port.is_open:
             message = self.lineEdit.text()
             
             if message:
-                try:    
-                    self.serial_port.write(message.encode('utf-8'))
+                try:
+                    hex_message = bytes.fromhex(message.replace(" ", ""))    
+                    self.serial_port.write(hex_message)
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         # Ma'lumotni vaqt bilan birga logga qo'shish
                     formatted_data = f"<span style='color:green;'>[{current_time}] Отправлено сообщение:</span><span style='color:green;'> {message}</span>"
@@ -329,13 +351,9 @@ class Ui_MainWindow(object):
         self.comboBox_selectMotor.setItemText(1, _translate("MainWindow", "Мoтор 2"))
         self.comboBox_selectMotor.setItemText(2, _translate("MainWindow", "Мoтор 3"))
         self.comboBox_selectMotor.setItemText(3, _translate("MainWindow", "Мoтор 4"))
-        self.comboBox_selectMotor.setItemText(4, _translate("MainWindow", "Мoтор 5"))
-        self.comboBox_selectMotor.setItemText(5, _translate("MainWindow", "Мoтор 6"))
-        self.comboBox_selectMotor.setItemText(6, _translate("MainWindow", "Мoтор 7"))
-        self.comboBox_selectMotor.setItemText(7, _translate("MainWindow", "Мoтор 8"))
         self.checkBox.setText(_translate("MainWindow", "Обратный"))
-        self.btn_send.setText(_translate("MainWindow", "Отправлять"))
-        self.groupBox_2.setTitle(_translate("MainWindow", "Чтобы получить"))
+        self.btn_send.setText(_translate("MainWindow", "Отправлять 1"))
+        self.groupBox_2.setTitle(_translate("MainWindow", "Для получить"))
         self.btn_input.setText(_translate("MainWindow", "Получение данных"))
         self.groupBox_3.setTitle(_translate("MainWindow", "Таблица ПОРТОВ"))
         self.groupBox_4.setTitle(_translate("MainWindow", "Отправить"))
