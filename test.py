@@ -4,6 +4,8 @@ import serial.tools.list_ports as portlist
 import serial
 import threading
 from datetime import datetime
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+import os
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -66,8 +68,8 @@ class Ui_MainWindow(object):
 
         
         # RIGHT_BUTTON o'rniga yangi GroupBox qo'shamiz
-        self.coord_group = QtWidgets.QGroupBox("Koordinatalarni Kiriting")
-        self.coord_group.setFont(QtGui.QFont("Segoe UI", 12))
+        # self.coord_group = QtWidgets.QGroupBox("Koordinatalarni Kiriting")
+        # self.coord_group.setFont(QtGui.QFont("Segoe UI", 12))
         
         # GroupBox uchun layout
         group_layout = QtWidgets.QVBoxLayout()
@@ -108,7 +110,7 @@ class Ui_MainWindow(object):
         
 
         # Asosiy layoutga qo'shish
-        group_layout.addLayout(coord_layout)
+        # group_layout.addLayout(coord_layout)
         
         # Yuborish tugmasi uchun vertical spacer qo'shamiz
         group_layout.addSpacing(10)  # Tugma atrofidagi bo'shliqni kamaytiramiz
@@ -176,7 +178,7 @@ class Ui_MainWindow(object):
         sliders_layout.addLayout(speed_hbox)
 
         group_layout.addLayout(sliders_layout)
-        self.coord_group.setLayout(group_layout)
+        # self.coord_group.setLayout(group_layout)
 
         # Yuborish tugmasi
         self.submit_dbtn = QtWidgets.QPushButton("Yuborish")
@@ -198,13 +200,16 @@ class Ui_MainWindow(object):
         group_layout.addWidget(self.submit_dbtn)
 
         # Asosiy layoutga qo'shish
-        split_layout.addWidget(self.coord_group, 1)
+        # split_layout.addWidget(self.coord_group, 1)
         self.main_layout.addWidget(split_widget)
 
-        self.left_content = QtWidgets.QWidget()
-        self.left_content.setMinimumHeight(600)
-        self.left_content.setStyleSheet("background-color: #f5f5f5;")
-        split_layout.addWidget(self.left_content,2) 
+        self.browser = QWebEngineView()
+        self.browser.setMinimumHeight(550)
+        html_path = os.path.abspath("robot-kinematics/index.html")  # index.html joriy papkada
+        url =  QtCore.QUrl.fromLocalFile(html_path)
+        self.browser.load(url)
+
+        split_layout.addWidget(self.browser,2) 
 
 
         MainWindow.setCentralWidget(self.centralwidget)
