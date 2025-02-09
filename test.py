@@ -66,57 +66,6 @@ class Ui_MainWindow(object):
         split_layout = QtWidgets.QHBoxLayout(split_widget)
         split_layout.setContentsMargins(0, 0, 0, 0)
         split_layout.setSpacing(10)
-
-        
-        # RIGHT_BUTTON o'rniga yangi GroupBox qo'shamiz
-        # self.coord_group = QtWidgets.QGroupBox("Koordinatalarni Kiriting")
-        # self.coord_group.setFont(QtGui.QFont("Segoe UI", 12))
-        
-        # GroupBox uchun layout
-        group_layout = QtWidgets.QVBoxLayout()
-        group_layout.setContentsMargins(15, 20, 15, 15)
-        group_layout.setSpacing(15)
-
-        # Koordinatalar uchun gorizontal layout
-        coord_layout = QtWidgets.QHBoxLayout()
-        coord_layout.setContentsMargins(0, 0, 0, 0)
-        coord_layout.setSpacing(15)
-
-        # X koordinatasi
-        x_container = QtWidgets.QHBoxLayout()
-        x_container.addWidget(QtWidgets.QLabel("X:"))
-        self.x_input = QtWidgets.QLineEdit()
-        self.x_input.setPlaceholderText("0.0")
-        self.x_input.setFixedWidth(100)
-        x_container.addWidget(self.x_input)
-        coord_layout.addLayout(x_container)
-
-        # Y koordinatasi
-        y_container = QtWidgets.QHBoxLayout()
-        y_container.addWidget(QtWidgets.QLabel("Y:"))
-        self.y_input = QtWidgets.QLineEdit()
-        self.y_input.setPlaceholderText("0.0")
-        self.y_input.setFixedWidth(100)
-        y_container.addWidget(self.y_input)
-        coord_layout.addLayout(y_container)
-
-        # Z koordinatasi
-        z_container = QtWidgets.QHBoxLayout()
-        z_container.addWidget(QtWidgets.QLabel("Z:"))
-        self.z_input = QtWidgets.QLineEdit()
-        self.z_input.setPlaceholderText("0.0")
-        self.z_input.setFixedWidth(100)
-        z_container.addWidget(self.z_input)
-        coord_layout.addLayout(z_container) 
-        
-
-        # Asosiy layoutga qo'shish
-        # group_layout.addLayout(coord_layout)
-        
-        # Yuborish tugmasi uchun vertical spacer qo'shamiz
-        group_layout.addSpacing(10)  # Tugma atrofidagi bo'shliqni kamaytiramiz
-
-        # Yuborish tugmasi
         
         self.main_layout.addWidget(split_widget)
         #LINK - 3D visualizatsiya
@@ -130,9 +79,9 @@ class Ui_MainWindow(object):
         self.view.addItem(grid)
 
         #ANCHOR - bo'g'in uzunliklari
-        self.l1 = 2.0
-        self.l2 = 2.0
-        self.l3 = 1.5
+        self.l1 = 140/100
+        self.l2 = 200/100
+        self.l3 = 200/100
 
         # 1-bo‘g‘in
         self.cylinder1 = self.createCylinder(self.l1, (0, 0, 1, 1))
@@ -182,10 +131,14 @@ class Ui_MainWindow(object):
         return sphere
     def updateAngles(self):
         #REVIEW - burchaklarni qayta ko'rib chiqish kerak.
-        angle1 = 45
+        
+        try:
+            angle1 = float(self.doubleSpinBox.text().replace(',', '.'))
+        except ValueError:
+            angle1 = 0.0
+
         angle2 = 45
         angle3 = 45
-        print(self.doubleSpinBox.text())
         
         # 1-bo‘g‘in transformatsiyasi
         transform1 = QtGui.QMatrix4x4()
@@ -398,6 +351,8 @@ class Ui_MainWindow(object):
             else:
                 speed1 = "0"+hex_speed[2]
                 speed2 = hex_speed[3:5]
+
+            self.updateAngles()
             message = "11 " + isInverse + motor + " " + degree1+ " " + degree2 + " " + speed1 + " " + speed2
             hex_message = bytes.fromhex(message.replace(" ", ""))
             self.serial_port.write(hex_message)
