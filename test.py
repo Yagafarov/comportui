@@ -19,6 +19,9 @@ class Ui_MainWindow(object):
         self.main_layout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(15)
+        self.angle1 = 45
+        self.angle2 = 45
+        self.angle3 = 45.0  # Default qiymatlarni belgilash
 
         # Yuqori qism (gorizontal layout)
         top_layout = QtWidgets.QHBoxLayout()
@@ -130,39 +133,45 @@ class Ui_MainWindow(object):
         self.view.addItem(sphere)
         return sphere
     def updateAngles(self):
-        #REVIEW - burchaklarni qayta ko'rib chiqish kerak.
+        # Burchaklarni aniqlash
+        
+        
+        motor_index = int(self.comboBox_selectMotor.currentText().split(" ")[1])
         
         try:
-            angle1 = float(self.doubleSpinBox.text().replace(',', '.'))
+            if motor_index == 1:
+                self.angle1 = float(self.doubleSpinBox.value())
+            if motor_index == 2:
+                self.angle2 = float(self.doubleSpinBox.value())
+            if motor_index == 3:
+                self.angle3 = float(self.doubleSpinBox.value())
         except ValueError:
-            angle1 = 0.0
+            # Agar qiymatni o'qishda xato bo'lsa, default qiymatlar ishlatiladi
+            pass
 
-        angle2 = 45
-        angle3 = 45
-        
         # 1-bo‘g‘in transformatsiyasi
         transform1 = QtGui.QMatrix4x4()
-        transform1.rotate(angle1, 0, 0, 1)
+        transform1.rotate(self.angle1, 0, 0, 1)
         self.cylinder1.setTransform(transform1)
-        
+
         motor1_transform = QtGui.QMatrix4x4(transform1)
         motor1_transform.translate(0, 0, self.l1)
         self.motor1.setTransform(motor1_transform)
-        
+
         # 2-bo‘g‘in transformatsiyasi
         transform2 = QtGui.QMatrix4x4(motor1_transform)
-        transform2.rotate(angle2, 1, 0, 0)
+        transform2.rotate(self.angle2, 1, 0, 0)
         self.cylinder2.setTransform(transform2)
-        
+
         motor2_transform = QtGui.QMatrix4x4(transform2)
         motor2_transform.translate(0, 0, self.l2)
         self.motor2.setTransform(motor2_transform)
-        
+
         # 3-bo‘g‘in transformatsiyasi
         transform3 = QtGui.QMatrix4x4(motor2_transform)
-        transform3.rotate(angle3, 1, 0, 0)
+        transform3.rotate(self.angle3, 1, 0, 0)
         self.cylinder3.setTransform(transform3)
-        
+
         motor3_transform = QtGui.QMatrix4x4(transform3)
         motor3_transform.translate(0, 0, self.l3)
         self.motor3.setTransform(motor3_transform)
