@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+import pyqtgraph.opengl as gl
 import sys
 import serial.tools.list_ports as portlist
 import serial
@@ -116,100 +117,36 @@ class Ui_MainWindow(object):
         group_layout.addSpacing(10)  # Tugma atrofidagi bo'shliqni kamaytiramiz
 
         # Yuborish tugmasi
-        self.submit_btn = QtWidgets.QPushButton("Yuborish")
-        self.submit_btn.setIcon(QtGui.QIcon("icons/send.png"))
-        self.submit_btn.setFont(QtGui.QFont("Segoe UI", 12))
-        self.submit_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #2196F3;
-                color: white;
-                border-radius: 6px;
-                padding: 6px 12px;
-                margin: 5px 0;  /* Tugma atrofidagi bo'shliqni kamaytiramiz */
-            }
-            QPushButton:hover {
-                background-color: #1976D2;
-            }
-        """)
-        group_layout.addWidget(self.submit_btn)
-
-       # Sliderlar uchun sozlash
-        sliders_layout = QtWidgets.QVBoxLayout()
-        sliders_layout.setContentsMargins(0, 5, 0, 0)
-        sliders_layout.setSpacing(8)
-
-        # Ro'yxatlarni e'lon qilish
-        self.motor_sliders = []    # Burchak sliderlari
-        self.motor_labels = []     # Burchak qiymatlari
-        self.speed_slider = None   # Umumiy tezlik slideri
-        self.speed_label = None    # Umumiy tezlik qiymati
-
-        # Har bir motor uchun BURCHAK sliderlari
-        for i in range(1, 5):
-            hbox = QtWidgets.QHBoxLayout()
-            label = QtWidgets.QLabel(f"Motor {i}:")
-            slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
-            slider.setRange(-180, 180)
-            slider.setValue(0)
-            slider.setTickInterval(10)
-            slider.setPageStep(10)
-            value_label = QtWidgets.QLabel("0")
-            slider.valueChanged.connect(lambda v, lbl=value_label: lbl.setText(str(v)))
-            hbox.addWidget(label)
-            hbox.addWidget(slider)
-            hbox.addWidget(value_label)
-            sliders_layout.addLayout(hbox)
-            self.motor_sliders.append(slider)
-            self.motor_labels.append(value_label)
-
-        # UMUMIY TEZLIK slideri
-        speed_hbox = QtWidgets.QHBoxLayout()
-        speed_label = QtWidgets.QLabel("Umumiy Tezlik:")
-        self.speed_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
-        self.speed_slider.setRange(0, 100)
-        self.speed_slider.setValue(0)
-        self.speed_slider.setTickInterval(5)
-        self.speed_slider.setPageStep(5)
-        self.speed_label = QtWidgets.QLabel("0")
-        self.speed_slider.valueChanged.connect(lambda v: self.speed_label.setText(str(v)))
-        speed_hbox.addWidget(speed_label)
-        speed_hbox.addWidget(self.speed_slider)
-        speed_hbox.addWidget(self.speed_label)
-        sliders_layout.addLayout(speed_hbox)
-
-        group_layout.addLayout(sliders_layout)
-        # self.coord_group.setLayout(group_layout)
-
-        # Yuborish tugmasi
-        self.submit_dbtn = QtWidgets.QPushButton("Yuborish")
-        self.submit_dbtn = QtWidgets.QPushButton("Yuborish")
-        self.submit_dbtn.setIcon(QtGui.QIcon("icons/send.png"))
-        self.submit_dbtn.setFont(QtGui.QFont("Segoe UI", 12))
-        self.submit_dbtn.setStyleSheet("""
-            QPushButton {
-                background-color: #2196F3;
-                color: white;
-                border-radius: 6px;
-                padding: 6px 12px;
-                margin: 5px 0;  /* Tugma atrofidagi bo'shliqni kamaytiramiz */
-            }
-            QPushButton:hover {
-                background-color: #1976D2;
-            }
-        """)
-        group_layout.addWidget(self.submit_dbtn)
-
-        # Asosiy layoutga qo'shish
-        # split_layout.addWidget(self.coord_group, 1)
+        
         self.main_layout.addWidget(split_widget)
+        #LINK - 3D visualizatsiya
+        self.view = gl.GLViewWidget()
+        self.view.setMinimumHeight(600)
+        split_layout.addWidget(self.view,2)
 
-        self.browser = QWebEngineView()
-        self.browser.setMinimumHeight(550)
-        html_path = os.path.abspath("robot-kinematics/index.html")  # index.html joriy papkada
-        url =  QtCore.QUrl.fromLocalFile(html_path)
-        self.browser.load(url)
+        #ANCHOR - fazoda yerni ifodalash 
+        grid = gl.GLGridItem()
+        grid.scale(1, 1, 1)
+        self.view.addItem(grid)
 
-        split_layout.addWidget(self.browser,2) 
+        #ANCHOR - bo'g'in uzunliklari
+        self.l1 = 2.0
+        self.l2 = 2.0
+        self.l3 = 1.5
+
+        # 1-bo‘g‘in
+        self.cylinder1 = self.createCylinder(self.l1, (0, 0, 1, 1))
+        self.motor1 = self.createSphere((1, 1, 0, 1))
+
+        # 2-bo‘g‘in
+        self.cylinder2 = self.createCylinder(self.l2, (0, 1, 0, 1))
+        self.motor2 = self.createSphere((1, 0, 1, 1))
+
+        # 3-bo‘g‘in
+        self.cylinder3 = self.createCylinder(self.l3, (1, 0, 0, 1))
+        self.motor3 = self.createSphere((0, 1, 1, 1))
+
+        self.updateAngles()
 
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -232,6 +169,50 @@ class Ui_MainWindow(object):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_ports)
         self.timer.start(1000)
+    def createCylinder(self, length, color):
+        cylinder = gl.GLMeshItem(meshdata=gl.MeshData.cylinder(rows=20, cols=20, radius=[0.1, 0.1], length=length),
+                                 smooth=True, shader='shaded', color=color)
+        self.view.addItem(cylinder)
+        return cylinder
+
+    def createSphere(self, color):
+        sphere = gl.GLMeshItem(meshdata=gl.MeshData.sphere(rows=20, cols=20, radius=0.2),
+                               smooth=True, shader='shaded', color=color)
+        self.view.addItem(sphere)
+        return sphere
+    def updateAngles(self):
+        #REVIEW - burchaklarni qayta ko'rib chiqish kerak.
+        angle1 = 45
+        angle2 = 45
+        angle3 = 45
+        print(self.doubleSpinBox.text())
+        
+        # 1-bo‘g‘in transformatsiyasi
+        transform1 = QtGui.QMatrix4x4()
+        transform1.rotate(angle1, 0, 0, 1)
+        self.cylinder1.setTransform(transform1)
+        
+        motor1_transform = QtGui.QMatrix4x4(transform1)
+        motor1_transform.translate(0, 0, self.l1)
+        self.motor1.setTransform(motor1_transform)
+        
+        # 2-bo‘g‘in transformatsiyasi
+        transform2 = QtGui.QMatrix4x4(motor1_transform)
+        transform2.rotate(angle2, 1, 0, 0)
+        self.cylinder2.setTransform(transform2)
+        
+        motor2_transform = QtGui.QMatrix4x4(transform2)
+        motor2_transform.translate(0, 0, self.l2)
+        self.motor2.setTransform(motor2_transform)
+        
+        # 3-bo‘g‘in transformatsiyasi
+        transform3 = QtGui.QMatrix4x4(motor2_transform)
+        transform3.rotate(angle3, 1, 0, 0)
+        self.cylinder3.setTransform(transform3)
+        
+        motor3_transform = QtGui.QMatrix4x4(transform3)
+        motor3_transform.translate(0, 0, self.l3)
+        self.motor3.setTransform(motor3_transform)
 
     def _create_group1(self):
         self.groupBox.setTitle("Для отправки")

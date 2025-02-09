@@ -18,7 +18,7 @@ class RobotArm(QWidget):
         
         self.view = gl.GLViewWidget()
         main_layout.addWidget(self.view, 1)
-        
+    
         # Bo‘g‘in 1 slider
         self.angle1_label = QLabel("Angle 1: 0°")
         control_layout.addWidget(self.angle1_label)
