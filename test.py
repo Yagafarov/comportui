@@ -71,6 +71,7 @@ class Ui_MainWindow(object):
         split_layout.setSpacing(10)
         
         self.main_layout.addWidget(split_widget)
+
         #LINK - 3D visualizatsiya
         self.view = gl.GLViewWidget()
         self.view.setMinimumHeight(600)
@@ -136,14 +137,19 @@ class Ui_MainWindow(object):
         # Burchaklarni aniqlash
         
         
-        motor_index = int(self.comboBox_selectMotor.currentText().split(" ")[1])
+        text = self.comboBox_selectMotor.currentText()
+        try:
+            motor_index = int(text.split(" ")[1])
+        except (IndexError, ValueError):
+            motor_index = 1  # Default motor index
+
         
         try:
             if motor_index == 1:
                 self.angle1 = float(self.doubleSpinBox.value())
-            if motor_index == 2:
+            elif motor_index == 2:
                 self.angle2 = float(self.doubleSpinBox.value())
-            if motor_index == 3:
+            elif motor_index == 3:
                 self.angle3 = float(self.doubleSpinBox.value())
         except ValueError:
             # Agar qiymatni o'qishda xato bo'lsa, default qiymatlar ishlatiladi
@@ -176,6 +182,7 @@ class Ui_MainWindow(object):
         motor3_transform.translate(0, 0, self.l3)
         self.motor3.setTransform(motor3_transform)
 
+    #LINK - API orqali ma'lumotlarni yuborish
     def _create_group1(self):
         self.groupBox.setTitle("Для отправки")
         self.groupBox.setFont(QtGui.QFont("Segoe UI", 12))
@@ -227,6 +234,7 @@ class Ui_MainWindow(object):
         layout.addWidget(self.btn_send)
         self.groupBox.setLayout(layout)
 
+    #LINK - Qabul qilish va PORTni ochish
     def _create_group2(self):
         self.groupBox_2.setTitle("Для получить")
         self.groupBox_2.setFont(QtGui.QFont("Segoe UI", 12))
@@ -239,18 +247,6 @@ class Ui_MainWindow(object):
         
         self.btn_input = QtWidgets.QPushButton("Получение данных")
         self.btn_input.setIcon(QtGui.QIcon("icons/input.png"))
-        # self.btn_input.setStyleSheet("""
-        #     QPushButton {
-        #         background-color: #2196F3;
-        #         color: white;
-        #         border-radius: 6px;
-        #         padding: 6px 12px;
-        #     }
-        #     QPushButton:hover {
-        #         background-color: #1976D2;
-        #     }
-        # """)
-        
         self.btn_input.setFont(QtGui.QFont("Segoe UI", 12))
 
         port_layout.addWidget(self.comboBox_ports)
@@ -258,6 +254,7 @@ class Ui_MainWindow(object):
         layout.addLayout(port_layout)
         self.groupBox_2.setLayout(layout)
 
+    #LINK - LOGlar va PORT jadvallarini ko'rish uchun
     def _create_group3(self):
         self.groupBox_3.setTitle("Информация")
         self.groupBox_3.setFont(QtGui.QFont("Segoe UI", 12))
@@ -301,6 +298,7 @@ class Ui_MainWindow(object):
 
         self.groupBox_3.setLayout(layout)
     
+    #LINK - Oddiy matn yuborish uchun
     def _create_group4(self):
         self.groupBox_4.setTitle("Отправить")
         self.groupBox_4.setFont(QtGui.QFont("Segoe UI", 12))
@@ -329,7 +327,7 @@ class Ui_MainWindow(object):
         layout.addWidget(self.btn_send_2, 1)
         self.groupBox_4.setLayout(layout)
 
-    # Qolgan metodlar original kod bilan bir xil
+    #LINK -  LOGlarni tozalash funksiyasi
     def clearText(self):
         if hasattr(self,'serial_port') and self.serial_port and self.serial_port.is_open:
             self.textBrowser1.clear()
@@ -341,6 +339,7 @@ class Ui_MainWindow(object):
             self.textBrowser1.clear()
             self.textBrowser1.append("<span style='color:red;'>Записи очищены</span>")
 
+    #LINK - API orqali ma'lumot yuborish funksiyasi
     def btn_send_motor(self):
         if hasattr(self, 'serial_port') and self.serial_port and self.serial_port.is_open:
             motor = self.comboBox_selectMotor.currentText().split(" ")[1]
@@ -372,6 +371,7 @@ class Ui_MainWindow(object):
         else:
             self.textBrowser1.append("<span style='color:red;'>Ошибка: последовательный порт не открыт.</span>")
 
+    #LINK - Oddiy matn yuborish uchun funksiya
     def btn_send_clicked(self):
         if hasattr(self,'serial_port') and self.serial_port and self.serial_port.is_open:
             message = self.lineEdit.text()
@@ -392,6 +392,7 @@ class Ui_MainWindow(object):
         else:
             self.textBrowser1.append("<span style='color:red;'>Ошибка: последовательный порт не открыт.</span>")
 
+    #LINK - PORT listni yangilash uchun funksiya
     def update_ports(self):
         self.table_model.removeRows(0, self.table_model.rowCount())  # Jadvalni tozalash
         current_port = self.comboBox_ports.currentText()
@@ -418,6 +419,7 @@ class Ui_MainWindow(object):
         else:
             self.comboBox_ports.setCurrentIndex(0) 
 
+    #LINK - PORT jadvalini yangilash uchun funksiya
     def add_table_row(self, name, comment):
         row_count = self.table_model.rowCount()
         self.table_model.insertRow(row_count)
