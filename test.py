@@ -194,8 +194,10 @@ class Ui_MainWindow(object):
         self.checkBox.setFont(QtGui.QFont("Segoe UI", 12))
         self.doubleSpinBox = QtWidgets.QDoubleSpinBox()
         self.doubleSpinBox.setFont(QtGui.QFont("Segoe UI", 12))
+        self.doubleSpinBox.setRange(0, 999)
         self.doubleSpinBox_2 = QtWidgets.QDoubleSpinBox()
         self.doubleSpinBox_2.setFont(QtGui.QFont("Segoe UI", 12))
+        self.doubleSpinBox_2.setRange(0, 999)
         self.btn_send = QtWidgets.QPushButton("Отправлять")
         self.btn_send.setIcon(QtGui.QIcon("icons/send.png"))
         self.btn_send.setFont(QtGui.QFont("Segoe UI", 12))
@@ -346,6 +348,7 @@ class Ui_MainWindow(object):
             isInverse = "8" if self.checkBox.isChecked() else "0"
             
             hex_degree = str(hex(int(float(self.doubleSpinBox.text().replace(',', '')))))
+            print(hex_degree)
             if len(hex_degree)==6:
                 degree1=hex_degree[2:4]
                 degree2=hex_degree[4:6]
