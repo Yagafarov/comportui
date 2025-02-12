@@ -20,8 +20,8 @@ class Ui_MainWindow(object):
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(15)
         self.angle1 = 45
-        self.angle2 = 45
-        self.angle3 = 45.0  # Default qiymatlarni belgilash
+        self.angle2 = -45
+        self.angle3 = 90  # Default qiymatlarni belgilash
 
         # Yuqori qism (gorizontal layout)
         top_layout = QtWidgets.QHBoxLayout()
@@ -380,6 +380,7 @@ class Ui_MainWindow(object):
                 try:
                     hex_message = bytes.fromhex(message.replace(" ", ""))    
                     self.serial_port.write(hex_message)
+                    self.serial_port.writable(hex(19))
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         # Ma'lumotni vaqt bilan birga logga qo'shish
                     formatted_data = f"<span style='color:green;'>[{current_time}] Отправлено сообщение:</span><span style='color:green;'> {message}</span>"
