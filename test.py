@@ -379,8 +379,8 @@ class Ui_MainWindow(object):
             if message:
                 try:
                     hex_message = bytes.fromhex(message.replace(" ", ""))    
-                    self.serial_port.write(hex_message)
-                    self.serial_port.writable(hex(19))
+                    self.serial_port.write(int(message))
+                    # self.serial_port.writable(hex(19))
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         # Ma'lumotni vaqt bilan birga logga qo'shish
                     formatted_data = f"<span style='color:green;'>[{current_time}] Отправлено сообщение:</span><span style='color:green;'> {message}</span>"
