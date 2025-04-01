@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph.opengl as gl
+from newsFunction import actionSendWithApi,actionSendDefault,actionGoGome
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -161,6 +162,7 @@ class Ui_MainWindow(object):
 
 
         self.pushButton = QtWidgets.QPushButton("Send", self.groupBoxAPISend)
+        self.pushButton.clicked.connect(actionSendWithApi)
         self.pushButton.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
@@ -236,6 +238,7 @@ class Ui_MainWindow(object):
         self.verticalLayoutDefaultText.addWidget(self.checkBox_2)
 
         self.pushButton_2 = QtWidgets.QPushButton("Send", self.groupBox_5)
+        self.pushButton_2.clicked.connect(actionSendDefault)
         self.pushButton_2.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
@@ -351,12 +354,37 @@ class Ui_MainWindow(object):
 
         # MENU BAR
         self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setStyleSheet("padding-top:10px;padding-bottom:10px;")
         MainWindow.setMenuBar(self.menubar)
-
+        self.menubar.setStyleSheet("""
+            QMenuBar::item {
+                padding: 5px;
+            }
+            QMenuBar::item:selected {
+                background-color: #3498db;
+                color: white;
+            }
+            QMenuBar::item:hover {
+                background-color: #2980b9;
+                color: white;
+            }
+            QMenu::item {
+                background-color: transparent;
+                color: black;
+                padding: 5px;
+            }
+            QMenu::item:selected {
+                background-color: #3498db;
+                color: white;
+            }
+            QMenu::item:hover {
+                color: red;
+            }
+        """)
         self.menuAction = QtWidgets.QMenu("Action", self.menubar)
-        self.menuHome = QtWidgets.QMenu("Go home", self.menubar)
         self.menuPorts = QtWidgets.QMenu("Ports", self.menubar)
         self.menuHelp = QtWidgets.QMenu("Help", self.menubar)
+        
 
         MainWindow.setMenuBar(self.menubar)
 
@@ -367,16 +395,50 @@ class Ui_MainWindow(object):
         self.actionCreator = QtWidgets.QAction("Creator", MainWindow)
         self.actionInfo = QtWidgets.QAction("Info", MainWindow)
 
+        # Go Home menyusiga tugma qo'shish
+        self.actionGoHome = QtWidgets.QAction("Go Home", MainWindow)
+        self.menuAction.addAction(self.actionGoHome)
+        self.actionGoHome.triggered.connect(actionGoGome)
+
         self.menuHelp.addAction(self.actionCreator)
         self.menuHelp.addAction(self.actionInfo)
         self.menubar.addAction(self.menuAction.menuAction())
         self.menubar.addAction(self.menuPorts.menuAction())
-        self.menubar.addAction(self.menuHome.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        self.actionEnterIP = QtWidgets.QAction("Enter IP", MainWindow)
+        self.menuAction.addAction(self.actionEnterIP)
 
+        # "Enter IP" tugmasiga funksiya bog'lash
+        self.actionEnterIP.triggered.connect(self.show_ip_dialog)
+        self.menuHelp.addAction(self.actionCreator)
+        self.menuHelp.addAction(self.actionInfo)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        MainWindow.setStatusBar(self.statusbar)
 
+        # "Salom" ni o‘ng tomonga joylashtirish
+        self.menuWidget = QtWidgets.QWidget(self.menubar)
+        self.menuLayout = QtWidgets.QHBoxLayout(self.menuWidget)
+        self.menuLayout.setContentsMargins(0, 0, 0, 0)  # Ichki bo‘sh joyni olib tashlash
+        self.menuLayout.addStretch()  # Bo‘sh joy qo‘shish
+        self.labelIP = QtWidgets.QLabel("Salom", self.menuWidget)
+        self.labelIP.setStyleSheet("font-size: 16px; padding-right: 10px;padding-top:10px;padding-bottom:10px;")
+        self.menuLayout.addWidget(self.labelIP)
+
+        self.menubar.setCornerWidget(self.menuWidget, QtCore.Qt.TopRightCorner)
+    def show_ip_dialog(self):
+        # IP kiritish uchun dialog oynasini ko'rsatish
+        ip_dialog = QtWidgets.QInputDialog()
+        ip_dialog.setWindowTitle("Enter IP Address")
+        ip_dialog.setLabelText("Please enter the IP address:")
+        ip_dialog.setTextValue("")  # Default value
+
+        # Foydalanuvchi IP manzilini kiritganidan so'ng, uni olish
+        if ip_dialog.exec_():
+            ip_address = ip_dialog.textValue()
+            print(f"Entered IP Address: {ip_address}")
+            self.labelIP.setText(f"IP: {ip_address}" )
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
