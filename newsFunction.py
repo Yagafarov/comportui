@@ -29,3 +29,5 @@ def send_request():
         print(f"Request error: {e}")
     except Exception as e:
         print(f"Error: {e}")
+
+

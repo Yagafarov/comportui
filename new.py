@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph.opengl as gl
 from newsFunction import actionSendWithApi,actionSendDefault,actionGoGome
+import re
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -354,39 +355,43 @@ class Ui_MainWindow(object):
 
         # MENU BAR
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setStyleSheet("padding-top:10px;padding-bottom:10px;")
         MainWindow.setMenuBar(self.menubar)
         self.menubar.setStyleSheet("""
+            QMenuBar {
+                margin: 20px 0;                
+            }
             QMenuBar::item {
-                padding: 5px;
+                padding: 10px;
+                color: #333; /* Dark text color */
             }
             QMenuBar::item:selected {
-                background-color: #3498db;
+                background-color: #3498db; /* Selected background */
                 color: white;
             }
             QMenuBar::item:hover {
-                background-color: #2980b9;
+                background-color: #2980b9; /* Hover background */
                 color: white;
             }
-            QMenu::item {
-                background-color: transparent;
+            QMenu {
+                background-color: #ffffff; /* White background for menus */
                 color: black;
-                padding: 5px;
+            }
+            QMenu::item {
+                padding: 10px;
             }
             QMenu::item:selected {
-                background-color: #3498db;
+                background-color: #3498db; /* Selected item background */
                 color: white;
             }
             QMenu::item:hover {
-                color: red;
+                background-color: #2980b9; /* Hover item background */
+                color: white;
             }
         """)
+
         self.menuAction = QtWidgets.QMenu("Action", self.menubar)
         self.menuPorts = QtWidgets.QMenu("Ports", self.menubar)
         self.menuHelp = QtWidgets.QMenu("Help", self.menubar)
-        
-
-        MainWindow.setMenuBar(self.menubar)
 
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         MainWindow.setStatusBar(self.statusbar)
@@ -394,8 +399,6 @@ class Ui_MainWindow(object):
         # ACTIONS
         self.actionCreator = QtWidgets.QAction("Creator", MainWindow)
         self.actionInfo = QtWidgets.QAction("Info", MainWindow)
-
-        # Go Home menyusiga tugma qo'shish
         self.actionGoHome = QtWidgets.QAction("Go Home", MainWindow)
         self.menuAction.addAction(self.actionGoHome)
         self.actionGoHome.triggered.connect(actionGoGome)
@@ -405,40 +408,60 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuAction.menuAction())
         self.menubar.addAction(self.menuPorts.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-        self.actionEnterIP = QtWidgets.QAction("Enter IP", MainWindow)
-        self.menuAction.addAction(self.actionEnterIP)
 
-        # "Enter IP" tugmasiga funksiya bog'lash
-        self.actionEnterIP.triggered.connect(self.show_ip_dialog)
-        self.menuHelp.addAction(self.actionCreator)
-        self.menuHelp.addAction(self.actionInfo)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        MainWindow.setStatusBar(self.statusbar)
-
-        # "Salom" ni o‘ng tomonga joylashtirish
+        # Menu Widget for IP display
         self.menuWidget = QtWidgets.QWidget(self.menubar)
         self.menuLayout = QtWidgets.QHBoxLayout(self.menuWidget)
-        self.menuLayout.setContentsMargins(0, 0, 0, 0)  # Ichki bo‘sh joyni olib tashlash
-        self.menuLayout.addStretch()  # Bo‘sh joy qo‘shish
-        self.labelIP = QtWidgets.QLabel("Salom", self.menuWidget)
-        self.labelIP.setStyleSheet("font-size: 16px; padding-right: 10px;padding-top:10px;padding-bottom:10px;")
-        self.menuLayout.addWidget(self.labelIP)
+        self.menuLayout.setContentsMargins(0, 0, 0, 0)  # Remove internal margins
+        self.lineEditIP = QtWidgets.QLineEdit(self.menuWidget)
+        self.lineEditIP.setPlaceholderText("Enter IP")  # Placeholder text for guidance
+        self.lineEditIP.setStyleSheet("""
+            font-size: 16px; 
+            padding: 10px; 
+            background-color: #e6f7ff; /* Light blue background */
+            color: #333; /* Dark text color */
+            border: 1px solid #a0c4ff; /* Light border */
+            border-radius: 5px; /* Rounded corners */
+            margin-right: 5px; 
+            min-width: 200px; 
+        """)
+        self.lineEditIP.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        self.menuLayout.addWidget(self.lineEditIP)
 
+        # Create the OK button
+        self.okButton = QtWidgets.QPushButton("OK", self.menuWidget)
+        self.okButton.setStyleSheet("""
+            font-size: 16px; 
+            padding: 10px; 
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text color */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            margin-right: 20px; /* Space from the line edit */
+        """)
+        self.okButton.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        self.menuLayout.addWidget(self.okButton)
+
+        # Connect the button's clicked signal to the validation method
+        self.okButton.clicked.connect(self.validate_ip_format)
+
+        self.menuLayout.addStretch()  # Add stretchable space at the end
         self.menubar.setCornerWidget(self.menuWidget, QtCore.Qt.TopRightCorner)
-    def show_ip_dialog(self):
-        # IP kiritish uchun dialog oynasini ko'rsatish
-        ip_dialog = QtWidgets.QInputDialog()
-        ip_dialog.setWindowTitle("Enter IP Address")
-        ip_dialog.setLabelText("Please enter the IP address:")
-        ip_dialog.setTextValue("")  # Default value
+    def validate_ip_format(self):
+        ip_address = self.lineEditIP.text()
+        ip_pattern = re.compile(r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\."
+                                r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\."
+                                r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\."
+                                r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
 
-        # Foydalanuvchi IP manzilini kiritganidan so'ng, uni olish
-        if ip_dialog.exec_():
-            ip_address = ip_dialog.textValue()
-            print(f"Entered IP Address: {ip_address}")
-            self.labelIP.setText(f"IP: {ip_address}" )
+        if ip_pattern.match(ip_address):
+            QtWidgets.QMessageBox.information(self.menuWidget, "Valid IP", "The IP address format is valid.")
+            print("Success")
+        else:
+            QtWidgets.QMessageBox.warning(self.menuWidget, "Invalid IP", "The IP address format is invalid. Please enter a valid IP address.")
+            print('Have a problem')
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
