@@ -4,6 +4,8 @@ from newsFunction import actionSendWithApi,actionSendDefault,actionGoGome
 import re
 
 class Ui_MainWindow(object):
+    def __init__(self):
+        self.esp_ip = "192.168.187.183"
     def setupUi(self, MainWindow):
         # ANCHOR - Main Window Setup
         MainWindow.setWindowTitle("AGRORob")
@@ -163,7 +165,7 @@ class Ui_MainWindow(object):
 
 
         self.pushButton = QtWidgets.QPushButton("Send", self.groupBoxAPISend)
-        self.pushButton.clicked.connect(actionSendWithApi)
+        self.pushButton.clicked.connect(actionSendWithApi(self.esp_ip))
         self.pushButton.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
@@ -239,7 +241,7 @@ class Ui_MainWindow(object):
         self.verticalLayoutDefaultText.addWidget(self.checkBox_2)
 
         self.pushButton_2 = QtWidgets.QPushButton("Send", self.groupBox_5)
-        self.pushButton_2.clicked.connect(actionSendDefault)
+        self.pushButton_2.clicked.connect(actionSendDefault(self.esp_ip))
         self.pushButton_2.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
@@ -401,7 +403,7 @@ class Ui_MainWindow(object):
         self.actionInfo = QtWidgets.QAction("Info", MainWindow)
         self.actionGoHome = QtWidgets.QAction("Go Home", MainWindow)
         self.menuAction.addAction(self.actionGoHome)
-        self.actionGoHome.triggered.connect(actionGoGome)
+        self.actionGoHome.triggered.connect(actionGoGome(self.esp_ip))
 
         self.menuHelp.addAction(self.actionCreator)
         self.menuHelp.addAction(self.actionInfo)
@@ -417,14 +419,16 @@ class Ui_MainWindow(object):
         self.menuLayout.setContentsMargins(0, 0, 0, 0)  # Remove internal margins
         self.lineEditIP = QtWidgets.QLineEdit(self.menuWidget)
         self.lineEditIP.setPlaceholderText("Enter IP")  # Placeholder text for guidance
+        self.lineEditIP.setText(f"{self.esp_ip}")
         self.lineEditIP.setStyleSheet("""
             font-size: 16px; 
-            padding: 10px; 
+            padding: 5px; 
             background-color: #e6f7ff; /* Light blue background */
             color: #333; /* Dark text color */
             border: 1px solid #a0c4ff; /* Light border */
             border-radius: 5px; /* Rounded corners */
-            margin-right: 5px; 
+            margin-right: 5px;
+            margin-top:10px; 
             min-width: 200px; 
         """)
         self.lineEditIP.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -434,11 +438,13 @@ class Ui_MainWindow(object):
         self.okButton = QtWidgets.QPushButton("OK", self.menuWidget)
         self.okButton.setStyleSheet("""
             font-size: 16px; 
-            padding: 10px; 
-            background-color: #4CAF50; /* Green background */
+            background-color:qlineargradient(x1:0, y1:0, x2:1, y2:1, 
+                                            stop:0 #0056a1, stop:1 #003f6b); /* Green background */
+            padding: 5px; 
             color: white; /* White text color */
             border: none; /* No border */
             border-radius: 5px; /* Rounded corners */
+            margin-top:10px;
             margin-right: 20px; /* Space from the line edit */
         """)
         self.okButton.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -457,11 +463,36 @@ class Ui_MainWindow(object):
                                 r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
 
         if ip_pattern.match(ip_address):
-            QtWidgets.QMessageBox.information(self.menuWidget, "Valid IP", "The IP address format is valid.")
+            # Change text color to green if valid
+            self.lineEditIP.setStyleSheet("""
+                font-size: 16px; 
+                padding: 5px; 
+                background-color: #e6f7ff; /* Light blue background */
+                color: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
+                                            stop:0 #0056a1, stop:1 #003f6b); /* Dark text color */
+                border: 1px solid #a0c4ff; /* Light border */
+                border-radius: 5px; /* Rounded corners */
+                margin-right: 5px;
+                margin-top:10px; 
+                min-width: 200px; 
+            """)
             print("Success")
+            self.esp_ip = self.lineEditIP.text()
         else:
-            QtWidgets.QMessageBox.warning(self.menuWidget, "Invalid IP", "The IP address format is invalid. Please enter a valid IP address.")
+            # Change text color to red if invalid
+            self.lineEditIP.setStyleSheet("""
+                font-size: 16px; 
+                padding: 5px; 
+                background-color: #e6f7ff; /* Light blue background */
+                color: red; /* Dark text color */
+                border: 1px solid #a0c4ff; /* Light border */
+                border-radius: 5px; /* Rounded corners */
+                margin-right: 5px;
+                margin-top:10px; 
+                min-width: 200px; 
+            """)
             print('Have a problem')
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

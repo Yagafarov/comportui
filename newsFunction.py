@@ -1,16 +1,17 @@
 import requests
 import threading
 
-def actionSendWithApi():
-    print("Sending msg with API")
+def actionSendWithApi(esp_ip):
+    print(f"Sending msg with API, ip:{esp_ip}")
 
-def actionSendDefault():
+def actionSendDefault(esp_ip):
     print("Send msg default")
-def actionGoGome():
-    # Yangi threadda so'rovni bajaramiz
-    threading.Thread(target=send_request).start()
 
-def send_request():
+def actionGoGome(esp_ip):
+    # Yangi threadda so'rovni bajaramiz
+    threading.Thread(target=send_request(esp_ip)).start()
+
+def send_request(esp_ip):
     try:
         # Toggle LED
         response = requests.get('http://192.168.187.183/toggle')  # ESP32 IP manzilini qo'shing
@@ -20,7 +21,7 @@ def send_request():
             print("Failed to toggle LED")
 
         # Go Home command
-        response = requests.get('http://192.168.187.183/go_home')  # ESP32 IP manzilini qo'shing
+        response = requests.get(f'http://{esp_ip}/go_home')  # ESP32 IP manzilini qo'shing
         if response.status_code == 200:
             print("Go Home command sent successfully")
         else:
@@ -29,5 +30,6 @@ def send_request():
         print(f"Request error: {e}")
     except Exception as e:
         print(f"Error: {e}")
+
 
 
