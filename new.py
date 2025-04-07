@@ -4,14 +4,13 @@ from newsFunction import actionSendWithApi,actionSendDefault,actionGoGome
 import re
 
 class Ui_MainWindow(object):
-    def __init__(self):
-        self.esp_ip = "192.168.187.183"
+        
     def setupUi(self, MainWindow):
         # ANCHOR - Main Window Setup
         MainWindow.setWindowTitle("AGRORob")
         MainWindow.setMinimumSize(QtCore.QSize(1024, 800))
         MainWindow.setStyleSheet("background-color: #f0f0f0;")
-
+        esp_ip = "192.168.187.183"
         self.centralwidget = QtWidgets.QWidget(MainWindow)
 
         # ANCHOR - Main Layout
@@ -165,7 +164,7 @@ class Ui_MainWindow(object):
 
 
         self.pushButton = QtWidgets.QPushButton("Send", self.groupBoxAPISend)
-        self.pushButton.clicked.connect(actionSendWithApi(self.esp_ip))
+        self.pushButton.clicked.connect(lambda: actionSendWithApi(esp_ip))
         self.pushButton.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
@@ -241,7 +240,7 @@ class Ui_MainWindow(object):
         self.verticalLayoutDefaultText.addWidget(self.checkBox_2)
 
         self.pushButton_2 = QtWidgets.QPushButton("Send", self.groupBox_5)
-        self.pushButton_2.clicked.connect(actionSendDefault(self.esp_ip))
+        self.pushButton_2.clicked.connect(lambda: actionSendDefault(esp_ip))
         self.pushButton_2.setStyleSheet("""
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
@@ -403,7 +402,7 @@ class Ui_MainWindow(object):
         self.actionInfo = QtWidgets.QAction("Info", MainWindow)
         self.actionGoHome = QtWidgets.QAction("Go Home", MainWindow)
         self.menuAction.addAction(self.actionGoHome)
-        self.actionGoHome.triggered.connect(actionGoGome(self.esp_ip))
+        self.actionGoHome.triggered.connect(lambda: actionGoGome(esp_ip))
 
         self.menuHelp.addAction(self.actionCreator)
         self.menuHelp.addAction(self.actionInfo)
@@ -419,7 +418,7 @@ class Ui_MainWindow(object):
         self.menuLayout.setContentsMargins(0, 0, 0, 0)  # Remove internal margins
         self.lineEditIP = QtWidgets.QLineEdit(self.menuWidget)
         self.lineEditIP.setPlaceholderText("Enter IP")  # Placeholder text for guidance
-        self.lineEditIP.setText(f"{self.esp_ip}")
+        self.lineEditIP.setText(f"{esp_ip}")
         self.lineEditIP.setStyleSheet("""
             font-size: 16px; 
             padding: 5px; 
@@ -477,7 +476,7 @@ class Ui_MainWindow(object):
                 min-width: 200px; 
             """)
             print("Success")
-            self.esp_ip = self.lineEditIP.text()
+            esp_ip = self.lineEditIP.text()
         else:
             # Change text color to red if invalid
             self.lineEditIP.setStyleSheet("""
