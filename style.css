@@ -1,0 +1,148 @@
+/* COMBOBOX */
+QComboBox {
+    background-color: #f0f0f0; /* Background color */
+    border: 1px solid #888; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px; /* Padding */
+    margin-bottom:10px;
+    font-size:16px;
+}
+QComboBox::drop-down {
+    border: none; /* No border for dropdown */
+}
+QComboBox::item {
+    background-color: #ffffff;
+}
+QComboBox::item:selected {
+    background-color: #0078d7; /* Selected item color */
+    color: white; /* Selected item text color */
+}
+
+
+QDoubleSpinBox {
+    background-color: #f0f0f0; /* Background color */
+    border: 2px solid #0078d7; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px; /* Padding */
+    font-size: 16px; /* Font size */ 
+}
+
+QSlider:horizontal {
+    background: #f7f7f7; /* Yengil fon rangi */
+    height: 30px; /* Slayder balandligi */
+    border-radius: 15px; /* Burchaklarni yumshatish */
+    margin-bottom:10px;
+}
+QSlider::groove:horizontal {
+    background: #d0d0d0; /* Groove rangi */
+    height: 10px; /* Groove balandligi */
+    border-radius: 5px; /* Groove burchaklarini yumshatish */
+}
+QSlider::handle:horizontal {
+    background: #4a90e2; /* Qo'lga olish rangi */
+    width: 25px; /* Qo'lga olish kengligi */
+    margin: -7px 0; /* Qo'lga olishni markazga joylash */
+    border-radius: 12px; /* Yumshoq qo'lga olish */
+    border: 2px solid #ffffff; /* Oq chegara */
+}
+QSlider::handle:horizontal:hover {
+    background: #357ab8; /* Qo'lga olish hover rangi */
+    border: 2px solid #ffffff; /* Hoverda oq chegara */
+}
+
+
+QCheckBox {
+    spacing: 5px; /* Checkbox va matn orasidagi masofa */
+    font-size: 14px; /* Shrift o'lchami */
+    color: #333; /* Matn rangi */
+}
+QCheckBox::indicator {
+    width: 20px; /* Indikator kengligi */
+    height: 20px; /* Indikator balandligi */
+    border: 2px solid #0078d7; /* Indikator chegarasi */
+    border-radius: 4px; /* Indikator burchaklarini yumshatish */
+    background: #f0f0f0; /* Indikatorning fon rangi */
+}
+QCheckBox::indicator:checked {
+    background: #0078d7; /* Belgilangan indikator rangi */
+    border: 2px solid #0056a1; /* Belgilangan indikator chegarasi */
+}
+QCheckBox::indicator:unchecked {
+    background: #f0f0f0; /* Belgilanmagan indikator rangi */
+}
+QCheckBox::indicator:checked:hover {
+    background: #0056a1; /* Belgilangan indikator hover rangi */
+}
+
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #0078d7, stop:1 #0056a1); /* Gradient fon */
+    color: white; /* Matn rangi */
+    border: none; /* Chegara yo'q */
+    border-radius: 5px; /* Burchaklarni yumshatish */
+    padding: 10px 20px; /* Tugma ichidagi bo'sh joy */
+    font-size: 16px; /* Shrift o'lchami */
+}
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #0056a1, stop:1 #003f6b); /* Hover holatidagi gradient */
+}
+QPushButton:pressed {
+    background-color: #004080; /* Tugma bosilganda fon rangi */
+}
+
+QLineEdit {
+    background-color: #f9f9f9; /* Fon rangi */
+    color: #333; /* Matn rangi */
+    border: 2px solid #0078d7; /* Chegara rangi */
+    border-radius: 5px; /* Burchaklarni yumshatish */
+    padding: 10px; /* Ichki bo'sh joy */
+    font-size: 16px; /* Shrift o'lchami */
+}
+QLineEdit:focus {
+    border: 2px solid #0056a1; /* Fokustagi chegaraning rangi */
+    background-color: #ffffff; /* Fokustagi fon rangi */
+}
+
+QTextBrowser {
+    background-color: #f9f9f9; /* Fon rangi */
+    color: #333; /* Matn rangi */
+    border: 2px solid #0078d7; /* Chegara rangi */
+    border-radius: 5px; /* Burchaklarni yumshatish */
+    padding: 10px; /* Ichki bo'sh joy */
+    font-size: 14px; /* Shrift o'lchami */
+    selection-background-color: #0078d7; /* Tanlangan matn fon rangi */
+    selection-color: white; /* Tanlangan matn rangi */
+}
+QTextBrowser:focus {
+    border: 2px solid #0056a1; /* Fokustagi chegaraning rangi */
+}
+
+QMenuBar {
+    margin: 20px 0;                
+}
+QMenuBar::item {
+    padding: 10px;
+    color: #333; /* Dark text color */
+}
+QMenuBar::item:selected {
+    background-color: #3498db; /* Selected background */
+    color: white;
+}
+QMenuBar::item:hover {
+    background-color: #2980b9; /* Hover background */
+    color: white;
+}
+QMenu {
+    background-color: #ffffff; /* White background for menus */
+    color: black;
+}
+QMenu::item {
+    padding: 10px;
+}
+QMenu::item:selected {
+    background-color: #3498db; /* Selected item background */
+    color: white;
+}
+QMenu::item:hover {
+    background-color: #2980b9; /* Hover item background */
+    color: white;
+}

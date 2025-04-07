@@ -12,7 +12,8 @@ class Ui_MainWindow(object):
         MainWindow.setStyleSheet("background-color: #f0f0f0;")
         esp_ip = "192.168.187.183"
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-
+        with open("style.css", "r") as file:
+            stylesheet = file.read()
         # ANCHOR - Main Layout
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
 
@@ -30,26 +31,7 @@ class Ui_MainWindow(object):
 
         self.comboBox = QtWidgets.QComboBox(self.groupBoxAPISend)
         self.comboBox.addItems(["Motor 1", "Motor 2", "Motor 3", "Motor 4"])
-        self.comboBox.setStyleSheet("""
-            QComboBox {
-                background-color: #f0f0f0; /* Background color */
-                border: 1px solid #888; /* Border color */
-                border-radius: 5px; /* Rounded corners */
-                padding: 5px; /* Padding */
-                margin-bottom:10px;
-                font-size:16px;
-            }
-            QComboBox::drop-down {
-                border: none; /* No border for dropdown */
-            }
-            QComboBox::item {
-                background-color: #ffffff;
-            }
-            QComboBox::item:selected {
-                background-color: #0078d7; /* Selected item color */
-                color: white; /* Selected item text color */
-            }
-        """)
+        self.comboBox.setStyleSheet(stylesheet)
         self.verticalLayoutAPISend.addWidget(self.comboBox)
 
         self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.groupBoxAPISend)
@@ -57,45 +39,14 @@ class Ui_MainWindow(object):
         self.doubleSpinBox.setDecimals(2)  # Kasrli qiymatlar uchun 2 o'nlik raqam
         self.doubleSpinBox.setSingleStep(0.1)  
         self.doubleSpinBox.setValue(0) 
-        self.doubleSpinBox.setStyleSheet("""
-            QDoubleSpinBox {
-                background-color: #f0f0f0; /* Background color */
-                border: 2px solid #0078d7; /* Border color */
-                border-radius: 5px; /* Rounded corners */
-                padding: 5px; /* Padding */
-                font-size: 16px; /* Font size */ 
-            }
-        """)
+        self.doubleSpinBox.setStyleSheet(stylesheet)
         self.verticalLayoutAPISend.addWidget(self.doubleSpinBox)
 
         self.horizontalSlider = QtWidgets.QSlider(self.groupBoxAPISend)
         self.horizontalSlider.setRange(-180, 180)
         self.horizontalSlider.setValue(0)
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSlider.setStyleSheet("""
-    QSlider:horizontal {
-        background: #f7f7f7; /* Yengil fon rangi */
-        height: 30px; /* Slayder balandligi */
-        border-radius: 15px; /* Burchaklarni yumshatish */
-        margin-bottom:10px;
-    }
-    QSlider::groove:horizontal {
-        background: #d0d0d0; /* Groove rangi */
-        height: 10px; /* Groove balandligi */
-        border-radius: 5px; /* Groove burchaklarini yumshatish */
-    }
-    QSlider::handle:horizontal {
-        background: #4a90e2; /* Qo'lga olish rangi */
-        width: 25px; /* Qo'lga olish kengligi */
-        margin: -7px 0; /* Qo'lga olishni markazga joylash */
-        border-radius: 12px; /* Yumshoq qo'lga olish */
-        border: 2px solid #ffffff; /* Oq chegara */
-    }
-    QSlider::handle:horizontal:hover {
-        background: #357ab8; /* Qo'lga olish hover rangi */
-        border: 2px solid #ffffff; /* Hoverda oq chegara */
-    }
-""")
+        self.horizontalSlider.setStyleSheet(stylesheet)
         self.doubleSpinBox.valueChanged.connect(
             lambda value: self.horizontalSlider.setValue(int(value))
         )
@@ -125,30 +76,7 @@ class Ui_MainWindow(object):
         self.horizontalSliderSpeed.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderSpeed.setRange(-1800, 1800)  # Sliderni butun sonlar oraliqda o'rnatamiz (10 barobar oshirilgan)
         self.horizontalSliderSpeed.setValue(0)  # Boshlang'ich qiymat
-        self.horizontalSliderSpeed.setStyleSheet("""
-            QSlider:horizontal {
-                background: #f7f7f7; /* Yengil fon rangi */
-                height: 30px; /* Slayder balandligi */
-                border-radius: 15px; /* Burchaklarni yumshatish */
-                margin-bottom:10px;
-            }
-            QSlider::groove:horizontal {
-                background: #d0d0d0; /* Groove rangi */
-                height: 10px; /* Groove balandligi */
-                border-radius: 5px; /* Groove burchaklarini yumshatish */
-            }
-            QSlider::handle:horizontal {
-                background: #4a90e2; /* Qo'lga olish rangi */
-                width: 25px; /* Qo'lga olish kengligi */
-                margin: -7px 0; /* Qo'lga olishni markazga joylash */
-                border-radius: 12px; /* Yumshoq qo'lga olish */
-                border: 2px solid #ffffff; /* Oq chegara */
-            }
-            QSlider::handle:horizontal:hover {
-                background: #357ab8; /* Qo'lga olish hover rangi */
-                border: 2px solid #ffffff; /* Hoverda oq chegara */
-            }
-        """)
+        self.horizontalSliderSpeed.setStyleSheet(stylesheet)
         self.verticalLayoutAPISend.addWidget(self.horizontalSliderSpeed)
 
         # Sliderni DoubleSpinBox'ga bog'lash
@@ -164,53 +92,13 @@ class Ui_MainWindow(object):
         self.checkBox = QtWidgets.QCheckBox("HEX", self.groupBoxAPISend)
                 
         self.checkBox.setChecked(True)
-        self.checkBox.setStyleSheet("""
-            QCheckBox {
-                spacing: 5px; /* Checkbox va matn orasidagi masofa */
-                font-size: 14px; /* Shrift o'lchami */
-                color: #333; /* Matn rangi */
-            }
-            QCheckBox::indicator {
-                width: 20px; /* Indikator kengligi */
-                height: 20px; /* Indikator balandligi */
-                border: 2px solid #0078d7; /* Indikator chegarasi */
-                border-radius: 4px; /* Indikator burchaklarini yumshatish */
-                background: #f0f0f0; /* Indikatorning fon rangi */
-            }
-            QCheckBox::indicator:checked {
-                background: #0078d7; /* Belgilangan indikator rangi */
-                border: 2px solid #0056a1; /* Belgilangan indikator chegarasi */
-            }
-            QCheckBox::indicator:unchecked {
-                background: #f0f0f0; /* Belgilanmagan indikator rangi */
-            }
-            QCheckBox::indicator:checked:hover {
-                background: #0056a1; /* Belgilangan indikator hover rangi */
-            }
-        """)
+        self.checkBox.setStyleSheet(stylesheet)
         self.verticalLayoutAPISend.addWidget(self.checkBox)
 
 
         self.pushButton = QtWidgets.QPushButton("Send", self.groupBoxAPISend)
         self.pushButton.clicked.connect(lambda: actionSendWithApi(esp_ip))
-        self.pushButton.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0078d7, stop:1 #0056a1); /* Gradient fon */
-                color: white; /* Matn rangi */
-                border: none; /* Chegara yo'q */
-                border-radius: 5px; /* Burchaklarni yumshatish */
-                padding: 10px 20px; /* Tugma ichidagi bo'sh joy */
-                font-size: 16px; /* Shrift o'lchami */
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0056a1, stop:1 #003f6b); /* Hover holatidagi gradient */
-            }
-            QPushButton:pressed {
-                background-color: #004080; /* Tugma bosilganda fon rangi */
-            }
-        """)
+        self.pushButton.setStyleSheet(stylesheet)
 
 
         self.verticalLayoutAPISend.addWidget(self.pushButton)
@@ -222,71 +110,18 @@ class Ui_MainWindow(object):
         self.verticalLayoutDefaultText = QtWidgets.QVBoxLayout(self.groupBox_5)
 
         self.lineEdit = QtWidgets.QLineEdit(self.groupBox_5)
-        self.lineEdit.setStyleSheet("""
-    QLineEdit {
-        background-color: #f9f9f9; /* Fon rangi */
-        color: #333; /* Matn rangi */
-        border: 2px solid #0078d7; /* Chegara rangi */
-        border-radius: 5px; /* Burchaklarni yumshatish */
-        padding: 10px; /* Ichki bo'sh joy */
-        font-size: 16px; /* Shrift o'lchami */
-    }
-    QLineEdit:focus {
-        border: 2px solid #0056a1; /* Fokustagi chegaraning rangi */
-        background-color: #ffffff; /* Fokustagi fon rangi */
-    }
-""")
+        self.lineEdit.setStyleSheet(stylesheet)
         self.lineEdit.setPlaceholderText("Default Text")
         self.verticalLayoutDefaultText.addWidget(self.lineEdit)
 
         self.checkBox_2 = QtWidgets.QCheckBox("HEX", self.groupBox_5)
         self.checkBox_2.setChecked(True)
-        self.checkBox_2.setStyleSheet("""
-            QCheckBox {
-                spacing: 5px; /* Checkbox va matn orasidagi masofa */
-                font-size: 14px; /* Shrift o'lchami */
-                color: #333; /* Matn rangi */
-            }
-            QCheckBox::indicator {
-                width: 20px; /* Indikator kengligi */
-                height: 20px; /* Indikator balandligi */
-                border: 2px solid #0078d7; /* Indikator chegarasi */
-                border-radius: 4px; /* Indikator burchaklarini yumshatish */
-                background: #f0f0f0; /* Indikatorning fon rangi */
-            }
-            QCheckBox::indicator:checked {
-                background: #0078d7; /* Belgilangan indikator rangi */
-                border: 2px solid #0056a1; /* Belgilangan indikator chegarasi */
-            }
-            QCheckBox::indicator:unchecked {
-                background: #f0f0f0; /* Belgilanmagan indikator rangi */
-            }
-            QCheckBox::indicator:checked:hover {
-                background: #0056a1; /* Belgilangan indikator hover rangi */
-            }
-        """)
+        self.checkBox_2.setStyleSheet(stylesheet)
         self.verticalLayoutDefaultText.addWidget(self.checkBox_2)
 
         self.pushButton_2 = QtWidgets.QPushButton("Send", self.groupBox_5)
         self.pushButton_2.clicked.connect(lambda: actionSendDefault(esp_ip))
-        self.pushButton_2.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0078d7, stop:1 #0056a1); /* Gradient fon */
-                color: white; /* Matn rangi */
-                border: none; /* Chegara yo'q */
-                border-radius: 5px; /* Burchaklarni yumshatish */
-                padding: 10px 20px; /* Tugma ichidagi bo'sh joy */
-                font-size: 16px; /* Shrift o'lchami */
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0056a1, stop:1 #003f6b); /* Hover holatidagi gradient */
-            }
-            QPushButton:pressed {
-                background-color: #004080; /* Tugma bosilganda fon rangi */
-            }
-        """)
+        self.pushButton_2.setStyleSheet(stylesheet)
         self.verticalLayoutDefaultText.addWidget(self.pushButton_2)
 
         self.verticalLayoutControl.addWidget(self.groupBox_5)
@@ -296,64 +131,16 @@ class Ui_MainWindow(object):
         self.verticalLayoutLog = QtWidgets.QVBoxLayout(self.groupBox_3)
 
         self.textBrowser = QtWidgets.QTextBrowser(self.groupBox_3)
-        self.textBrowser.setStyleSheet("""
-            QTextBrowser {
-                background-color: #f9f9f9; /* Fon rangi */
-                color: #333; /* Matn rangi */
-                border: 2px solid #0078d7; /* Chegara rangi */
-                border-radius: 5px; /* Burchaklarni yumshatish */
-                padding: 10px; /* Ichki bo'sh joy */
-                font-size: 14px; /* Shrift o'lchami */
-                selection-background-color: #0078d7; /* Tanlangan matn fon rangi */
-                selection-color: white; /* Tanlangan matn rangi */
-            }
-            QTextBrowser:focus {
-                border: 2px solid #0056a1; /* Fokustagi chegaraning rangi */
-            }
-        """)
+        self.textBrowser.setStyleSheet(stylesheet)
         self.verticalLayoutLog.addWidget(self.textBrowser)
 
 
         self.pushButton_3 = QtWidgets.QPushButton("Open Port", self.groupBox_3)
-        self.pushButton_3.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0078d7, stop:1 #0056a1); /* Gradient fon */
-                color: white; /* Matn rangi */
-                border: none; /* Chegara yo'q */
-                border-radius: 5px; /* Burchaklarni yumshatish */
-                padding: 10px 20px; /* Tugma ichidagi bo'sh joy */
-                font-size: 16px; /* Shrift o'lchami */
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0056a1, stop:1 #003f6b); /* Hover holatidagi gradient */
-            }
-            QPushButton:pressed {
-                background-color: #004080; /* Tugma bosilganda fon rangi */
-            }
-        """)
+        self.pushButton_3.setStyleSheet(stylesheet)
         self.verticalLayoutLog.addWidget(self.pushButton_3)
 
         self.pushButton_4 = QtWidgets.QPushButton("Clear", self.groupBox_3)
-        self.pushButton_4.setStyleSheet("""
-            QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0078d7, stop:1 #0056a1); /* Gradient fon */
-                color: white; /* Matn rangi */
-                border: none; /* Chegara yo'q */
-                border-radius: 5px; /* Burchaklarni yumshatish */
-                padding: 10px 20px; /* Tugma ichidagi bo'sh joy */
-                font-size: 16px; /* Shrift o'lchami */
-            }
-            QPushButton:hover {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                                            stop:0 #0056a1, stop:1 #003f6b); /* Hover holatidagi gradient */
-            }
-            QPushButton:pressed {
-                background-color: #004080; /* Tugma bosilganda fon rangi */
-            }
-        """)
+        self.pushButton_4.setStyleSheet(stylesheet)
         self.verticalLayoutLog.addWidget(self.pushButton_4)
 
         self.verticalLayoutControl.addWidget(self.groupBox_3)
@@ -385,38 +172,7 @@ class Ui_MainWindow(object):
         # MENU BAR
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         MainWindow.setMenuBar(self.menubar)
-        self.menubar.setStyleSheet("""
-            QMenuBar {
-                margin: 20px 0;                
-            }
-            QMenuBar::item {
-                padding: 10px;
-                color: #333; /* Dark text color */
-            }
-            QMenuBar::item:selected {
-                background-color: #3498db; /* Selected background */
-                color: white;
-            }
-            QMenuBar::item:hover {
-                background-color: #2980b9; /* Hover background */
-                color: white;
-            }
-            QMenu {
-                background-color: #ffffff; /* White background for menus */
-                color: black;
-            }
-            QMenu::item {
-                padding: 10px;
-            }
-            QMenu::item:selected {
-                background-color: #3498db; /* Selected item background */
-                color: white;
-            }
-            QMenu::item:hover {
-                background-color: #2980b9; /* Hover item background */
-                color: white;
-            }
-        """)
+        self.menubar.setStyleSheet(stylesheet)
 
         self.menuAction = QtWidgets.QMenu("Action", self.menubar)
         self.menuPorts = QtWidgets.QMenu("Ports", self.menubar)
