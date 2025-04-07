@@ -53,6 +53,10 @@ class Ui_MainWindow(object):
         self.verticalLayoutAPISend.addWidget(self.comboBox)
 
         self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.groupBoxAPISend)
+        self.doubleSpinBox.setRange(-180.0,180.0)
+        self.doubleSpinBox.setDecimals(2)  # Kasrli qiymatlar uchun 2 o'nlik raqam
+        self.doubleSpinBox.setSingleStep(0.1)  
+        self.doubleSpinBox.setValue(0) 
         self.doubleSpinBox.setStyleSheet("""
             QDoubleSpinBox {
                 background-color: #f0f0f0; /* Background color */
@@ -65,6 +69,8 @@ class Ui_MainWindow(object):
         self.verticalLayoutAPISend.addWidget(self.doubleSpinBox)
 
         self.horizontalSlider = QtWidgets.QSlider(self.groupBoxAPISend)
+        self.horizontalSlider.setRange(-180, 180)
+        self.horizontalSlider.setValue(0)
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSlider.setStyleSheet("""
     QSlider:horizontal {
@@ -90,10 +96,20 @@ class Ui_MainWindow(object):
         border: 2px solid #ffffff; /* Hoverda oq chegara */
     }
 """)
+        self.doubleSpinBox.valueChanged.connect(
+            lambda value: self.horizontalSlider.setValue(int(value))
+        )
 
+        # Slider -> SpinBox
+        self.horizontalSlider.valueChanged.connect(
+            lambda value: self.doubleSpinBox.setValue(value)
+        )
         self.verticalLayoutAPISend.addWidget(self.horizontalSlider)
 
         self.doubleSpinBoxSpeed = QtWidgets.QDoubleSpinBox(self.groupBoxAPISend)
+        self.doubleSpinBoxSpeed.setRange(-180.0, 180.0)  # Haqiqiy sonlar uchun oraliq
+        self.doubleSpinBoxSpeed.setDecimals(1)  # 1 o'nlik raqam
+        self.doubleSpinBoxSpeed.setSingleStep(0.1)  # 0.1 qadam bilan oshirish
         self.doubleSpinBoxSpeed.setStyleSheet("""
             QDoubleSpinBox {
                 background-color: #f0f0f0; /* Background color */
@@ -104,34 +120,46 @@ class Ui_MainWindow(object):
             }
         """)
         self.verticalLayoutAPISend.addWidget(self.doubleSpinBoxSpeed)
+
         self.horizontalSliderSpeed = QtWidgets.QSlider(self.groupBoxAPISend)
         self.horizontalSliderSpeed.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSliderSpeed.setRange(-1800, 1800)  # Sliderni butun sonlar oraliqda o'rnatamiz (10 barobar oshirilgan)
+        self.horizontalSliderSpeed.setValue(0)  # Boshlang'ich qiymat
         self.horizontalSliderSpeed.setStyleSheet("""
-    QSlider:horizontal {
-        background: #f7f7f7; /* Yengil fon rangi */
-        height: 30px; /* Slayder balandligi */
-        border-radius: 15px; /* Burchaklarni yumshatish */
-        margin-bottom:10px;
-    }
-    QSlider::groove:horizontal {
-        background: #d0d0d0; /* Groove rangi */
-        height: 10px; /* Groove balandligi */
-        border-radius: 5px; /* Groove burchaklarini yumshatish */
-    }
-    QSlider::handle:horizontal {
-        background: #4a90e2; /* Qo'lga olish rangi */
-        width: 25px; /* Qo'lga olish kengligi */
-        margin: -7px 0; /* Qo'lga olishni markazga joylash */
-        border-radius: 12px; /* Yumshoq qo'lga olish */
-        border: 2px solid #ffffff; /* Oq chegara */
-    }
-    QSlider::handle:horizontal:hover {
-        background: #357ab8; /* Qo'lga olish hover rangi */
-        border: 2px solid #ffffff; /* Hoverda oq chegara */
-    }
-""")
-
+            QSlider:horizontal {
+                background: #f7f7f7; /* Yengil fon rangi */
+                height: 30px; /* Slayder balandligi */
+                border-radius: 15px; /* Burchaklarni yumshatish */
+                margin-bottom:10px;
+            }
+            QSlider::groove:horizontal {
+                background: #d0d0d0; /* Groove rangi */
+                height: 10px; /* Groove balandligi */
+                border-radius: 5px; /* Groove burchaklarini yumshatish */
+            }
+            QSlider::handle:horizontal {
+                background: #4a90e2; /* Qo'lga olish rangi */
+                width: 25px; /* Qo'lga olish kengligi */
+                margin: -7px 0; /* Qo'lga olishni markazga joylash */
+                border-radius: 12px; /* Yumshoq qo'lga olish */
+                border: 2px solid #ffffff; /* Oq chegara */
+            }
+            QSlider::handle:horizontal:hover {
+                background: #357ab8; /* Qo'lga olish hover rangi */
+                border: 2px solid #ffffff; /* Hoverda oq chegara */
+            }
+        """)
         self.verticalLayoutAPISend.addWidget(self.horizontalSliderSpeed)
+
+        # Sliderni DoubleSpinBox'ga bog'lash
+        self.horizontalSliderSpeed.valueChanged.connect(
+            lambda value: self.doubleSpinBoxSpeed.setValue(value / 10)  # Slider qiymatini 10 ga bo'lib, haqiqiy sonni o'zgartirish
+        )
+
+        # SpinBox qiymati o‘zgarganda sliderni yangilash
+        self.doubleSpinBoxSpeed.valueChanged.connect(
+            lambda value: self.horizontalSliderSpeed.setValue(int(value * 10))  # SpinBox qiymatini 10 ga ko'paytirib, butun sonni slayderga yuborish
+        )
 
         self.checkBox = QtWidgets.QCheckBox("HEX", self.groupBoxAPISend)
                 
